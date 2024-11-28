@@ -18,6 +18,8 @@ import Login from "./components/authcomp/Login.jsx";
 import Register from "./components/authcomp/Register.jsx";
 import Searchpage from "./components/searchpage.jsx";
 import { AuthProvider } from './context/AuthContext.jsx';
+import Aboutus from "./components/About/AboutUs/About US/aboutus.jsx";
+import Howitworks from "./components/About/HowitWorks/howitworks.jsx";
 
 
 
@@ -32,6 +34,8 @@ const router = createBrowserRouter(
       <Route path="ridebookinfo" element={<Ridebookinfo />} />
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
+      <Route path="aboutus" element={<Aboutus />} />
+      <Route path="howitworks" element={<Howitworks />} />
     </Route>
   )
 );
