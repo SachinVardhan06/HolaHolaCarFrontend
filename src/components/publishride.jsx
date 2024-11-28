@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useContext,useEffect } from "react";     
+import { useContext, useEffect } from "react";
 import { publishRide } from "../context/api";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
+import LocationSearch from "./Location/locationsearch";
 
 const PublishRideForm = () => {
   const { user } = useContext(AuthContext);
@@ -15,7 +16,7 @@ const PublishRideForm = () => {
     date: "",
     passengers: "",
     note: "", // Optional note field
-    contact_number: ""
+    contact_number: "",
   });
 
   const handleSubmit = async (e) => {
@@ -67,7 +68,7 @@ const PublishRideForm = () => {
   };
 
   const inputStyles =
-    "peer py-3 pe-0 ps-8 block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200 text-sm focus:border-t-transparent focus:border-x-transparent focus:border-b-blue-500 focus:ring-0";
+    "peer py-3 pe-0 ps-8 block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200 text-lg focus:border-t-transparent focus:border-x-transparent focus:border-b-blue-500 focus:ring-0";
 
   return (
     <div>
@@ -75,8 +76,8 @@ const PublishRideForm = () => {
       <div className="h-auto md:h-[750px] w-full flex justify-center bg-blue-500 flex-col items-center font-poppins shadow-xl p-4">
         <div className="w-full md:w-[90%] flex justify-center text-center">
           <h1 className="text-2xl md:text-5xl font-bold text-white">
-            Drive with <span className="text-boldtext">HolaHolaCar</span> and save
-            by sharing your ride!
+            Drive with <span className="text-boldtext">HolaHolaCar</span> and
+            save by sharing your ride!
           </h1>
         </div>
 
@@ -84,23 +85,17 @@ const PublishRideForm = () => {
         <div className="h-auto md:h-[530px] bg-white w-full md:w-[50%] flex justify-center rounded-xl mt-8 md:mt-14 p-4">
           <div className="w-full md:w-[95%] space-y-3 mt-4">
             <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                name="leavingFrom"
-                placeholder="Leaving From"
-                value={formData.leavingFrom}
-                onChange={handleChange}
-                required
-                className={inputStyles}
+              <LocationSearch
+                label="Leaving From"
+                onSelect={(value) =>
+                  setFormData({ ...formData, leavingFrom: value })
+                }
               />
-              <input
-                type="text"
-                name="destination"
-                placeholder="Destination"
-                value={formData.destination}
-                onChange={handleChange}
-                required
-                className={inputStyles}
+              <LocationSearch
+                label="Destination"
+                onSelect={(value) =>
+                  setFormData({ ...formData, destination: value })
+                }
               />
               <input
                 type="date"
@@ -200,3 +195,140 @@ const PublishRideForm = () => {
 };
 
 export default PublishRideForm;
+
+// import React, { useState, useContext, useEffect } from "react";
+// import { publishRide } from "../context/api";
+// import { toast } from "react-toastify";
+// import { AuthContext } from "../context/AuthContext";
+// import LocationSearch from "./Location/locationsearch";
+
+// const PublishRideForm = () => {
+//   const { user } = useContext(AuthContext);
+//   const [username, setUsername] = useState("Guest");
+//   const [formData, setFormData] = useState({
+//     name: "",
+//     leavingFrom: "",
+//     destination: "",
+//     price: "",
+//     date: "",
+//     passengers: "",
+//     note: "", // Optional note field
+//     contact_number: ""
+//   });
+
+//   useEffect(() => {
+//     if (user) {
+//       setUsername(user.username);
+//     }
+//   }, [user]);
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({ ...formData, [name]: value });
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     const rideData = {
+//       user: username,
+//       start_location: formData.leavingFrom.trim(),
+//       end_location: formData.destination.trim(),
+//       price: parseInt(formData.price, 10), // String with two decimals
+//       start_time: "2024-11-21T10:00:00Z", // Example fixed value
+//       end_time: "2024-11-21T12:00:00Z", // Example fixed value
+//       date: formData.date, // Already in ISO format from input[type="date"]
+//       passengers: parseInt(formData.passengers, 10),
+//       note: formData.note,
+//       contact_number: formData.contact_number
+//     };
+
+//     console.log("Submitting ride data:", rideData); // Debugging
+
+//     try {
+//       const data = await publishRide(rideData);
+//       console.log("Ride published successfully:", data);
+//       toast.success("Ride Published Successfully");
+//     } catch (error) {
+//       console.error(
+//         "Error publishing ride:",
+//         error.response?.data || error.message
+//       );
+//       alert("Failed to publish ride. Please try again.");
+//     }
+//   };
+
+//   useEffect(() => {
+//     const storedUsername = localStorage.getItem("username");
+//     if (storedUsername) {
+//       setUsername(storedUsername);
+//     }
+//   }, []);
+
+//   return (
+//     <div className="p-6">
+//       <h1 className="text-3xl font-bold mb-6">Publish a Ride</h1>
+//       <form onSubmit={handleSubmit}>
+//         <LocationSearch label="Leaving From" onSelect={(value) => setFormData({ ...formData, leavingFrom: value })} />
+//         <LocationSearch label="Destination" onSelect={(value) => setFormData({ ...formData, destination: value })} />
+//         <div className="mb-4">
+//           <label className="block text-gray-700 text-sm font-bold mb-2">Price</label>
+//           <input
+//             type="text"
+//             name="price"
+//             value={formData.price}
+//             onChange={handleInputChange}
+//             className="w-full p-2 border border-gray-300 rounded-md"
+//           />
+//         </div>
+//         <div className="mb-4">
+//           <label className="block text-gray-700 text-sm font-bold mb-2">Date</label>
+//           <input
+//             type="date"
+//             name="date"
+//             value={formData.date}
+//             onChange={handleInputChange}
+//             className="w-full p-2 border border-gray-300 rounded-md"
+//           />
+//         </div>
+//         <div className="mb-4">
+//           <label className="block text-gray-700 text-sm font-bold mb-2">Passengers</label>
+//           <input
+//             type="text"
+//             name="passengers"
+//             value={formData.passengers}
+//             onChange={handleInputChange}
+//             className="w-full p-2 border border-gray-300 rounded-md"
+//           />
+//         </div>
+//         <div className="mb-4">
+//           <label className="block text-gray-700 text-sm font-bold mb-2">Note</label>
+//           <textarea
+//             name="note"
+//             value={formData.note}
+//             onChange={handleInputChange}
+//             className="w-full p-2 border border-gray-300 rounded-md"
+//           />
+//         </div>
+//         <div className="mb-4">
+//           <label className="block text-gray-700 text-sm font-bold mb-2">Contact Number</label>
+//           <input
+//             type="text"
+//             name="contact_number"
+//             value={formData.contact_number}
+//             onChange={handleInputChange}
+//             className="w-full p-2 border border-gray-300 rounded-md"
+//           />
+//         </div>
+//         <button
+//           type="submit"
+//           className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+//         >
+//           Publish Ride
+//         </button>
+//       </form>
+//     </div>
+//   );
+// };
+
+// export default PublishRideForm;

@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import LocationSearch from "./Location/locationsearch";
+import { toast } from "react-toastify";
 
 function SearchPage() {
   const [expandedRide, setExpandedRide] = useState(null); // Track which ride is expanded
@@ -16,6 +18,8 @@ function SearchPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [token, setToken] = useState(""); // Add token state
+  const [showMap, setShowMap] = useState(false); // For displaying MapPopup
+  const [mapLocations, setMapLocations] = useState({ start: "", end: "" });
 
   // Handle user login
   // Handle ride search
@@ -35,6 +39,7 @@ function SearchPage() {
       );
       setRides(response.data.rides);
     } catch (err) {
+      toast.error("Ride not found");
       setError("Failed to fetch rides. Please try again.");
       console.error(err);
     } finally {
@@ -79,7 +84,7 @@ function SearchPage() {
     <>
       <div>
         {/* Container Div */}
-        <div className="h-[600px] w-full flex flex-col justify-center bg-blue-500 items-center font-poppins relative overflow-hidden">
+        <div className="h-full w-full flex flex-col justify-center bg-blue-500 items-center font-poppins relative overflow-hidden pb-6">
           {/* Main Content */}
           <div className="p-5 text-center">
             <h1 className="text-4xl sm:text-6xl lg:text-6xl font-bold text-white">
@@ -88,24 +93,11 @@ function SearchPage() {
           </div>
           <div className="h-auto bg-white w-[90%] sm:w-[70%] lg:w-[40%] flex justify-center rounded-xl p-4 shadow-md">
             <div className="w-full space-y-3">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={startLocation}
-                  onChange={(e) => setStartLocation(e.target.value)}
-                  className="peer py-3 px-4 block w-full bg-transparent border-b-2 border-gray-200 text-lg focus:border-blue-500 focus:ring-0"
-                  placeholder="Leaving from"
-                />
-              </div>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={endLocation}
-                  onChange={(e) => setEndLocation(e.target.value)}
-                  className="peer py-3 px-4 block w-full bg-transparent border-b-2 border-gray-200 text-lg focus:border-blue-500 focus:ring-0"
-                  placeholder="Going to"
-                />
-              </div>
+              <LocationSearch
+                label="Start Location"
+                onSelect={setStartLocation}
+              />
+              <LocationSearch label="End Location" onSelect={setEndLocation} />
               <div className="relative">
                 <input
                   type="date"
@@ -136,7 +128,7 @@ function SearchPage() {
         </div>
 
         {/* Rides Listing */}
-        <div className="w-full flex flex-col items-center mt-6 space-y-4 font-poppins px-4">
+        <div className="w-full flex flex-col items-center mt-6 space-y-4 font-poppins px-4 mb-16">
           {loading && <p className="text-lg text-gray-600">Loading...</p>}
           {error && <p className="text-lg text-red-500">{error}</p>}
           {rides.length > 0 &&
@@ -353,6 +345,137 @@ export default SearchPage;
 //         )}
 //       </div>
 //     </>
+//   );
+// }
+
+// export default SearchPage;
+
+// import React, { useState, useContext } from 'react';
+// import axios from 'axios';
+// import mbxGeocoding from '@mapbox/mapbox-sdk/services/geocoding';
+// import { AuthContext } from '../context/AuthContext';
+
+// const geocodingClient = mbxGeocoding({ accessToken: 'sk.eyJ1Ijoic2FjaGludmFyZGhhbiIsImEiOiJjbTQxNnFhZHowODB6Mm1xd3ZwbTNpajdzIn0.XXqKvUvOnQ6TwrUjNjlnaA' });
+
+// function LocationSearch({ label, onSelect }) {
+//   const [query, setQuery] = useState('');
+//   const [suggestions, setSuggestions] = useState([]);
+
+//   const handleInputChange = async (e) => {
+//     const value = e.target.value;
+//     setQuery(value);
+
+//     if (value.length > 2) {
+//       try {
+//         const response = await geocodingClient.forwardGeocode({
+//           query: value,
+//           limit: 5
+//         }).send();
+
+//         setSuggestions(response.body.features);
+//       } catch (error) {
+//         console.error('Error fetching location suggestions:', error);
+//       }
+//     } else {
+//       setSuggestions([]);
+//     }
+//   };
+
+//   const handleSuggestionClick = (suggestion) => {
+//     setQuery(suggestion.place_name);
+//     setSuggestions([]);
+//     onSelect(suggestion.place_name);
+//   };
+
+//   return (
+//     <div className="mb-4">
+//       <label className="block text-gray-700 text-sm font-bold mb-2">{label}</label>
+//       <input
+//         type="text"
+//         value={query}
+//         onChange={handleInputChange}
+//         placeholder={`Enter ${label.toLowerCase()}`}
+//         className="w-full p-2 border border-gray-300 rounded-md"
+//       />
+//       <ul className="mt-2 bg-white border border-gray-300 rounded-md">
+//         {suggestions.map((suggestion) => (
+//           <li
+//             key={suggestion.id}
+//             onClick={() => handleSuggestionClick(suggestion)}
+//             className="p-2 border-b border-gray-300 cursor-pointer hover:bg-gray-200"
+//           >
+//             {suggestion.place_name}
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
+
+// function SearchPage() {
+//   const [startLocation, setStartLocation] = useState('');
+//   const [endLocation, setEndLocation] = useState('');
+//   const [date, setDate] = useState('');
+//   const [rides, setRides] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState('');
+//   const [showMap, setShowMap] = useState(false); // For displaying MapPopup
+//   const [mapLocations, setMapLocations] = useState({ start: '', end: '' }); // Ride locations
+
+//   const { user, handleLogout } = useContext(AuthContext);
+
+//   const handleSearch = async () => {
+//     setLoading(true);
+//     setError('');
+//     try {
+//       const response = await axios.get(
+//         'https://holaholacarbackend-4.onrender.com/api/search-rides/',
+//         {
+//           params: {
+//             start_location: startLocation,
+//             end_location: endLocation,
+//             date,
+//           },
+//         }
+//       );
+//       setRides(response.data);
+//     } catch (err) {
+//       setError('Failed to fetch rides');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="p-6">
+//       <h1 className="text-3xl font-bold mb-6">Search Rides</h1>
+//       <LocationSearch label="Start Location" onSelect={setStartLocation} />
+//       <LocationSearch label="End Location" onSelect={setEndLocation} />
+//       <div className="mb-4">
+//         <label className="block text-gray-700 text-sm font-bold mb-2">Date</label>
+//         <input
+//           type="date"
+//           value={date}
+//           onChange={(e) => setDate(e.target.value)}
+//           className="w-full p-2 border border-gray-300 rounded-md"
+//         />
+//       </div>
+//       <button
+//         onClick={handleSearch}
+//         className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+//       >
+//         Search
+//       </button>
+//       {loading && <p>Loading...</p>}
+//       {error && <p className="text-red-500">{error}</p>}
+//       <ul className="mt-4">
+//         {Array.isArray(rides) && rides.map((ride) => (
+//           <li key={ride.id} className="p-4 border-b border-gray-300">
+//             {ride.name}
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
 //   );
 // }
 
