@@ -1,15 +1,15 @@
 import axios from "axios";
 
-const API_URL = "https://holaholacarbackend-4.onrender.com/api"; // Centralize the base URL
+const API_URL = "https://holaholacarbackend-4.onrender.com/api";
 
 // -------------------- Authentication ---------------------
 
-// Function to log in the user
+
 export const loginUser = async (credentials) => {
   try {
     const response = await axios.post(`${API_URL}/token/`, credentials);
 
-    // Fetch user details after obtaining the access token
+    
     const userDetails = await axios.get(`${API_URL}/user/`, {
       headers: { Authorization: `Bearer ${response.data.access}` },
     });
