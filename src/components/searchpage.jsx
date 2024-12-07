@@ -209,7 +209,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import LocationSearch from "./Location/locationsearch";
 import { toast } from "react-toastify";
-import MapPopup from "./MapPopup";
+import MapPopup from "./mappopup";
 import AddressToCoordinates from "./addresstocoordinate";
 
 function SearchPage() {
