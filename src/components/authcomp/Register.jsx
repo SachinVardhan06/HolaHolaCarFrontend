@@ -1,659 +1,419 @@
-// // import React, { useState, useContext } from "react";
-// // import { AuthContext } from "../../context/AuthContext";
-// // import { useNavigate } from "react-router-dom";
-// // import { Link } from "react-router-dom";
-// // import { toast } from "react-toastify";
-// // import "react-toastify/dist/ReactToastify.css";
-// // import signup from "../../assets/signup.png";
-
-// // const RegisterForm = () => {
-// //   // Function to validate email format
-// //   const validateEmail = (email) => {
-// //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// //     return emailRegex.test(email);
-// //   };
-
-// //   const { handleRegister, error } = useContext(AuthContext);
-// //   const [userData, setUserData] = useState({
-// //     username: "",
-// //     email: "",
-// //     password: "",
-// //     password2: "",
-// //   });
-// //   const navigate = useNavigate();
-
-// //   const handleSubmit = (e) => {
-// //     e.preventDefault();
-// //     if (userData.password === userData.password2) {
-// //       handleRegister(userData);
-// //       navigate("/home");
-// //       toast.success("SignUp Success");
-// //     } else {
-// //       {
-// //         toast("Password must Matched");
-// //       }
-// //     }
-// //     if (!validateEmail(formData.email)) {
-// //       newErrors.email = "Invalid email format";
-// //     }
-
-// //     // Validate password matching
-// //     if (formData.password !== formData.confirmPassword) {
-// //       newErrors.confirmPassword = "Passwords do not match";
-// //     }
-// //   };
-
-// //   return (
-// //     // <div className="h-screen w-screen overflow-hidden relative flex justify-center items-center font-poppins">
-// //     //   <div>
-// //     //     <img src={signup} alt="" />
-// //     //   </div>
-// //     //   <div className="relative z-10 flex gap-20">
-// //     //     <div className="h-auto w-[400px] p-8 rounded-2xl shadow-lg backdrop-blur-lg bg-opacity-30 flex flex-col items-center">
-// //     //       <h1 className="text-2xl font-semibold mb-2">Sign Up Account</h1>
-// //     //       <h2 className="text-sm text-gray-600 mb-6 text-center">
-// //     //         Enter your personal details to create your account
-// //     //       </h2>
-// //     //       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-// //     //         {/* Full Name Input */}
-// //     //         <input
-// //     //           type="text"
-// //     //           name="fullName"
-// //     //           placeholder="Full Name"
-// //     //           value={userData.username}
-// //     //           onChange={(e) =>
-// //     //             setUserData({ ...userData, username: e.target.value })
-// //     //           }
-// //     //           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-// //     //         />
-// //     //         {/* Email Input */}
-// //     //         <input
-// //     //           type="email"
-// //     //           name="email"
-// //     //           placeholder="Email"
-// //     //           value={userData.email}
-// //     //           onChange={(e) =>
-// //     //             setUserData({ ...userData, email: e.target.value })
-// //     //           }
-// //     //           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-// //     //         />
-// //     //         {/* Password Input */}
-// //     //         <input
-// //     //           type="password"
-// //     //           name="password"
-// //     //           placeholder="Password"
-// //     //           value={userData.password}
-// //     //           onChange={(e) =>
-// //     //             setUserData({ ...userData, password: e.target.value })
-// //     //           }
-// //     //           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-// //     //         />
-// //     //         {/* Confirm Password Input */}
-// //     //         <input
-// //     //           type="password"
-// //     //           name="confirmPassword"
-// //     //           placeholder="Confirm Password"
-// //     //           value={userData.password2}
-// //     //           onChange={(e) =>
-// //     //             setUserData({ ...userData, password2: e.target.value })
-// //     //           }
-// //     //           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-// //     //         />
-// //     //         {error && <div>{error}</div>}
-// //     //         {/* Register Button */}
-// //     //         <p>
-// //     //           <span className="text-white">Already has an Account</span>{" "}
-// //     //           <Link className="text-blue-500 underline" to="/login">
-// //     //             Sign In
-// //     //           </Link>
-// //     //         </p>
-// //     //         <button
-// //     //           type="submit"
-// //     //           className="w-full text-white text-sm font-semibold py-2 rounded-md border border-gray-500 transition duration-300 ease hover:bg-slate-600 focus:ring-2 focus:ring-slate-300"
-// //     //         >
-// //     //           Register
-// //     //         </button>
-// //     //       </form>
-// //     //     </div>
-// //     //   </div>
-// //     // </div>
-// //     <div className="h-screen w-screen overflow-hidden relative flex flex-row justify-center items-center font-poppins bg-gradient-to-r from-blue-500 to-purple-600">
-// //       <div className="hidden md:block">
-// //         <img
-// //           className="h-[400px] md:h-[500px] object-cover"
-// //           src={signup}
-// //           alt="Sign Up"
-// //         />
-// //       </div>
-// //       <div className="relative z-10 flex flex-col gap-8 bg-opacity-30 p-6 md:p-8 rounded-2xl shadow-lg backdrop-blur-lg bg-white/30 w-full max-w-md mx-4 md:mx-0">
-// //         <h1 className="text-3xl font-semibold mb-2 text-white relative z-20">
-// //           Register
-// //         </h1>
-// //         <h2 className="text-sm text-white mb-6 text-center relative z-20">
-// //           Enter your personal details to create your account
-// //         </h2>
-// //         <form
-// //           onSubmit={handleSubmit}
-// //           className="w-full flex flex-col gap-4 relative z-20"
-// //         >
-// //           {/* Full Name Input */}
-// //           <input
-// //             type="text"
-// //             name="fullName"
-// //             placeholder="Full Name"
-// //             value={userData.username}
-// //             onChange={(e) =>
-// //               setUserData({ ...userData, username: e.target.value })
-// //             }
-// //             className="w-full bg-transparent placeholder:text-slate-200 text-white text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-// //           />
-// //           {/* Email Input */}
-// //           <input
-// //             type="email"
-// //             name="email"
-// //             placeholder="Email"
-// //             value={userData.email}
-// //             onChange={(e) =>
-// //               setUserData({ ...userData, email: e.target.value })
-// //             }
-// //             className="w-full bg-transparent placeholder:text-slate-200 text-white text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-// //           />
-// //           {/* Password Input */}
-// //           <input
-// //             type="password"
-// //             name="password"
-// //             placeholder="Password"
-// //             value={userData.password}
-// //             onChange={(e) =>
-// //               setUserData({ ...userData, password: e.target.value })
-// //             }
-// //             className="w-full bg-transparent placeholder:text-slate-200 text-white text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-// //           />
-// //           {/* Confirm Password Input */}
-// //           <input
-// //             type="password"
-// //             name="confirmPassword"
-// //             placeholder="Confirm Password"
-// //             value={userData.password2}
-// //             onChange={(e) =>
-// //               setUserData({ ...userData, password2: e.target.value })
-// //             }
-// //             className="w-full bg-transparent placeholder:text-slate-200 text-white text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-// //           />
-// //           {error && <div className="text-red-500">{error}</div>}
-// //           <p className="text-white text-center">
-// //             <span>Already have an account?</span>{" "}
-// //             <Link className="text-blue-300 underline" to="/login">
-// //               Sign In
-// //             </Link>
-// //           </p>
-// //           {/* Register Button */}
-// //           <button
-// //             type="submit"
-// //             className="w-full text-white text-sm font-semibold py-2 rounded-md bg-green-500 hover:bg-green-600 transition duration-300 ease focus:ring-2 focus:ring-slate-500"
-// //           >
-// //             Register
-// //           </button>
-// //         </form>
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// // export default RegisterForm;
-
-// import React, { useState, useContext } from 'react';
-// import { AuthContext } from '../../context/AuthContext'
-// import { useNavigate } from "react-router-dom";
-// import { Link } from 'react-router-dom';
-// import { toast } from "react-toastify";
-// import 'react-toastify/dist/ReactToastify.css';
-
-// const RegisterForm = () => {
-//   // Function to validate email format
-//   const validateEmail = (email) => {
-//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//     return emailRegex.test(email);
-//   };
-
-//   const { handleRegister, error } = useContext(AuthContext);
-//   const [userData, setUserData] = useState({ username: '', email: '', password: '', password2: '' });
-//   const navigate = useNavigate();
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     if (userData.password === userData.password2) {
-//       handleRegister(userData);
-//       navigate('/home');
-//       toast.success("SignUp Success")        
-//     } else {
-//       {toast("Password must Matched")}
-//     }
-//     if (!validateEmail(formData.email)) {
-//       newErrors.email = "Invalid email format";
-//     }
-
-//     // Validate password matching
-//     if (formData.password !== formData.confirmPassword) {
-//       newErrors.confirmPassword = "Passwords do not match";
-//     }
-//   };
-
-
-//   return (
-//     <div className="h-screen w-screen overflow-hidden relative flex justify-center items-center font-poppins">
-//   <video
-//     className="absolute top-0 left-0 w-full h-full object-cover"
-//     src="https://motionbgs.com/media/1033/the-drive-on-the-road-at-sunset.960x540.mp4"
-//     autoPlay
-//     loop
-//     muted
-//   ></video>
-//   <div className="relative z-10 flex gap-20">
-//     <div className="h-auto w-[400px] p-8 rounded-2xl shadow-lg backdrop-blur-lg bg-opacity-30 flex flex-col items-center">
-//       <h1 className="text-2xl font-semibold mb-2">Sign Up Account</h1>
-//       <h2 className="text-sm text-gray-600 mb-6 text-center">
-//         Enter your personal details to create your account
-//       </h2>
-//       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-//         {/* Full Name Input */}
-//         <input
-//           type="text"
-//           name="fullName"
-//           placeholder="Full Name"
-//           value={userData.username}
-//           onChange={(e) => setUserData({ ...userData, username: e.target.value })}
-//           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-//         />
-//         {/* Email Input */}
-//         <input
-//           type="email"
-//           name="email"
-//           placeholder="Email"
-//           value={userData.email}
-//           onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-//           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-//         />
-//         {/* Password Input */}
-//         <input
-//           type="password"
-//           name="password"
-//           placeholder="Password"
-//           value={userData.password}
-//           onChange={(e) => setUserData({ ...userData, password: e.target.value })}
-//           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-//         />
-//         {/* Confirm Password Input */}
-//         <input
-//           type="password"
-//           name="confirmPassword"
-//           placeholder="Confirm Password"
-//           value={userData.password2}
-//           onChange={(e) => setUserData({ ...userData, password2: e.target.value })}
-//           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-//         />
-//         {error && <div>{error}</div>}
-//         {/* Register Button */}
-//         <p><span className="text-white">Already has an Account</span> <Link className="text-blue-500 underline" to="/login">Sign In</Link></p>
-//         <button
-//           type="submit"
-//           className="w-full text-white text-sm font-semibold py-2 rounded-md border border-gray-500 transition duration-300 ease hover:bg-slate-600 focus:ring-2 focus:ring-slate-300"
-//         >
-//           Register
-//         </button>
-//       </form>
-//     </div>
-//   </div>
-// </div>
-
-//   );
-// }
-
-// export default RegisterForm;
-
-
-// import React, { useState, useContext } from 'react';
-// import { AuthContext } from '../../context/AuthContext'
-// import { useNavigate } from "react-router-dom";
-// import { Link } from 'react-router-dom';
-// import { toast } from "react-toastify";
-// import 'react-toastify/dist/ReactToastify.css';
-
-// const RegisterForm = () => {
-//   // Function to validate email format
-//   const validateEmail = (email) => {
-//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//     return emailRegex.test(email);
-//   };
-
-//   const { handleRegister, error } = useContext(AuthContext);
-//   const [userData, setUserData] = useState({ username: '', email: '', password: '', password2: '' });
-//   const navigate = useNavigate();
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     if (userData.password === userData.password2) {
-//       handleRegister(userData);
-//       navigate('/home');
-//       toast.success("SignUp Success")        
-//     } else {
-//       {toast("Password must Matched")}
-//     }
-//     if (!validateEmail(formData.email)) {
-//       newErrors.email = "Invalid email format";
-//     }
-
-//     // Validate password matching
-//     if (formData.password !== formData.confirmPassword) {
-//       newErrors.confirmPassword = "Passwords do not match";
-//     }
-//   };
-
-
-//   return (
-//     <div className="h-screen w-screen overflow-hidden relative flex justify-center items-center font-poppins">
-//   <img src="https://th.bing.com/th/id/R.40764d49d892bca22959e11f65f9f1d5?rik=o7GJ6eNJ4%2b1TRQ&riu=http%3a%2f%2fhdwpro.com%2fwp-content%2fuploads%2f2017%2f01%2fCar-Full-HD-Wallpaper.jpg&ehk=dcpTFElVHk4Z9KRvgKnGPKD3CUNTSfln%2fZrG4hFAfMY%3d&risl=&pid=ImgRaw&r=0" alt="" className="absolute top-0 left-0 w-full h-full object-cover"/>
-//   <div className="relative z-10 flex gap-20">
-//     <div className="h-auto w-[400px] p-8 rounded-2xl shadow-lg backdrop-blur-lg bg-opacity-30 flex flex-col items-center">
-//       <h1 className="text-2xl font-semibold mb-2">Sign Up Account</h1>
-//       <h2 className="text-sm text-gray-600 mb-6 text-center">
-//         Enter your personal details to create your account
-//       </h2>
-//       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-//         {/* Full Name Input */}
-//         <input
-//           type="text"
-//           name="fullName"
-//           placeholder="Full Name"
-//           value={userData.username}
-//           onChange={(e) => setUserData({ ...userData, username: e.target.value })}
-//           className="w-full bg-transparent placeholder:text-black text-white text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-//         />
-//         {/* Email Input */}
-//         <input
-//           type="email"
-//           name="email"
-//           placeholder="Email"
-//           value={userData.email}
-//           onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-//           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-//         />
-//         {/* Password Input */}
-//         <input
-//           type="password"
-//           name="password"
-//           placeholder="Password"
-//           value={userData.password}
-//           onChange={(e) => setUserData({ ...userData, password: e.target.value })}
-//           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-//         />
-//         {/* Confirm Password Input */}
-//         <input
-//           type="password"
-//           name="confirmPassword"
-//           placeholder="Confirm Password"
-//           value={userData.password2}
-//           onChange={(e) => setUserData({ ...userData, password2: e.target.value })}
-//           className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-500 hover:border-slate-300 shadow-lg shadow-gray-100 ring-4 ring-transparent focus:ring-slate-100"
-//         />
-//         {error && <div>{error}</div>}
-//         {/* Register Button */}
-//         <p><span className="text-white">Already has an Account</span> <Link className="text-blue-500 underline" to="/login">Sign In</Link></p>
-//         <button
-//           type="submit"
-//           className="w-full text-white text-sm font-semibold py-2 rounded-md border border-gray-500 transition duration-300 ease hover:bg-slate-600 focus:ring-2 focus:ring-slate-300"
-//         >
-//           Register
-//         </button>
-//       </form>
-//     </div>
-//   </div>
-// </div>
-
-//   );
-// }
-
-// export default RegisterForm;
-
-
-// // import React, { useState, useContext } from 'react';
-// // import { useNavigate } from 'react-router-dom';
-// // import { toast } from 'react-toastify';
-// // import { AuthContext } from "../../context/AuthContext";
-
-// // const RegisterForm = () => {
-// //   const { handleRegister, error } = useContext(AuthContext);
-// //   const [userData, setUserData] = useState({ username: '', email: '', password: '', password2: '' });
-// //   const navigate = useNavigate();
-
-// //   // Function to validate email format
-// //   const validateEmail = (email) => {
-// //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// //     return emailRegex.test(email);
-// //   };
-
-// //   const handleSubmit = (e) => {
-// //     e.preventDefault();
-// //     let newErrors = {};
-
-// //     // Validate email format
-// //     if (!validateEmail(userData.email)) {
-// //       newErrors.email = "Invalid email format";
-// //       toast.error("Invalid email format");
-// //     }
-
-// //     // Validate password matching
-// //     if (userData.password !== userData.password2) {
-// //       newErrors.password2 = "Passwords do not match";
-// //       toast.error("Passwords do not match");
-// //     }
-
-// //     // If there are no errors, proceed with registration
-// //     if (Object.keys(newErrors).length === 0) {
-// //       handleRegister(userData)
-// //         .then(() => {
-// //           toast.success("SignUp Success");
-// //           navigate('/home');
-// //         })
-// //         .catch((err) => {
-// //           toast.error("SignUp Failed");
-// //           console.error("Error during registration:", err);
-// //         });
-// //     }
-// //   };
-
-// //   const handleChange = (e) => {
-// //     const { name, value } = e.target;
-// //     setUserData((prevData) => ({
-// //       ...prevData,
-// //       [name]: value,
-// //     }));
-// //   };
-
-// //   return (
-// //     <div className="min-h-screen bg-gradient-to-r from-green-600 to-blue-600 flex flex-col justify-center items-center font-poppins p-6">
-// //       <div className="bg-white bg-opacity-90 p-8 rounded-2xl shadow-lg max-w-md text-center w-full">
-// //         <h1 className="text-3xl font-bold text-gray-800 mb-4">Sign Up</h1>
-// //         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-// //           <input
-// //             type="text"
-// //             name="username"
-// //             placeholder="Username"
-// //             value={userData.username}
-// //             onChange={handleChange}
-// //             className="w-full bg-transparent placeholder:text-gray-500 text-black text-sm border border-gray-300 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-gray-500 hover:border-gray-400 shadow-lg ring-4 ring-transparent focus:ring-gray-200"
-// //             required
-// //           />
-// //           <input
-// //             type="email"
-// //             name="email"
-// //             placeholder="Email"
-// //             value={userData.email}
-// //             onChange={handleChange}
-// //             className="w-full bg-transparent placeholder:text-gray-500 text-black text-sm border border-gray-300 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-gray-500 hover:border-gray-400 shadow-lg ring-4 ring-transparent focus:ring-gray-200"
-// //             required
-// //           />
-// //           <input
-// //             type="password"
-// //             name="password"
-// //             placeholder="Password"
-// //             value={userData.password}
-// //             onChange={handleChange}
-// //             className="w-full bg-transparent placeholder:text-gray-500 text-black text-sm border border-gray-300 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-gray-500 hover:border-gray-400 shadow-lg ring-4 ring-transparent focus:ring-gray-200"
-// //             required
-// //           />
-// //           <input
-// //             type="password"
-// //             name="password2"
-// //             placeholder="Confirm Password"
-// //             value={userData.password2}
-// //             onChange={handleChange}
-// //             className="w-full bg-transparent placeholder:text-gray-500 text-black text-sm border border-gray-300 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-gray-500 hover:border-gray-400 shadow-lg ring-4 ring-transparent focus:ring-gray-200"
-// //             required
-// //           />
-// //           <button
-// //             type="submit"
-// //             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-// //           >
-// //             Sign Up
-// //           </button>
-// //         </form>
-// //         {error && <p className="text-red-500 mt-4">{error}</p>}
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// // export default RegisterForm;
-
-
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Link } from 'react-router-dom';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Divider,
+  Alert,
+  Grid,
+  Link as MuiLink,
+} from "@mui/material";
+import {
+  Google as GoogleIcon,
+  GitHub as GitHubIcon,
+  ArrowForward as ArrowForwardIcon,
+} from "@mui/icons-material";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import holasignup from '../../assets/holasignup.gif'
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import holasignup from "../../assets/holasignup.gif";
+
+// Theme configuration
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#166534",
+      light: "#16a34a",
+      dark: "#14532d",
+    },
+    secondary: {
+      main: "#000000",
+    },
+  },
+  typography: {
+    fontFamily: "'Inter', 'Roboto', 'Arial', sans-serif",
+    h3: {
+      fontWeight: 800,
+      letterSpacing: "-0.5px",
+    },
+    h4: {
+      fontWeight: 700,
+      letterSpacing: "-0.3px",
+    },
+  },
+  components: {
+    MuiTextField: {
+      defaultProps: {
+        variant: "outlined",
+      },
+      styleOverrides: {
+        root: {
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "12px",
+            backgroundColor: "#f8fafc",
+            transition: "all 0.3s ease",
+            "&:hover": {
+              backgroundColor: "#f1f5f9",
+            },
+            "&.Mui-focused": {
+              backgroundColor: "#ffffff",
+              boxShadow: "0 0 0 3px rgba(22, 101, 52, 0.1)",
+            },
+          },
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "12px",
+          textTransform: "none",
+          fontSize: "1rem",
+          padding: "12px 24px",
+          transition: "all 0.3s ease",
+        },
+      },
+    },
+  },
+});
+
+const providers = [
+  { id: "github", name: "GitHub", icon: <GitHubIcon /> },
+  { id: "google", name: "Google", icon: <GoogleIcon /> },
+];
 
 const RegisterForm = () => {
-  const { handleRegister, error } = useContext(AuthContext);
-  const [userData, setUserData] = useState({ username: '', email: '', password: '', password2: '' });
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [userData, setUserData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    password2: "",
+    phone_number: "",
+  });
 
-  // Function to validate email format
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let newErrors = {};
-
-    // Validate email format
-    if (!validateEmail(userData.email)) {
-      newErrors.email = "Invalid email format";
+  const validateForm = () => {
+    if (!userData.username.trim()) {
+      toast.error("Username is required");
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
       toast.error("Invalid email format");
+      return false;
     }
-
-    // Validate password matching
+    if (userData.password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return false;
+    }
     if (userData.password !== userData.password2) {
-      newErrors.password2 = "Passwords do not match";
       toast.error("Passwords do not match");
+      return false;
     }
+    if (!/^\d{10}$/.test(userData.phone_number)) {
+      toast.error("Please enter a valid 10-digit phone number");
+      return false;
+    }
+    return true;
+  };
 
-    // If there are no errors, proceed with registration
-    if (Object.keys(newErrors).length === 0) {
-      handleRegister(userData)
-        .then(() => {
-          toast.success("SignUp Success");
-          navigate('/home');
-        })
-        .catch((err) => {
-          toast.error("SignUp Failed");
-          console.error("Error during registration:", err);
-        });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+  
+    setLoading(true);
+    setError("");
+  
+    const formData = {
+      username: userData.username,
+      email: userData.email,
+      password: userData.password,
+      password2: userData.password2,  // Adding password confirmation
+      phone_number: userData.phone_number
+    };
+  
+    try {
+      const response = await fetch("http://localhost:8000/api/register/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+        credentials: 'include',  // Include cookies if needed
+      });
+  
+      if (!response.ok) {
+        const data = await response.json();
+        // Handle different types of error responses
+        if (data.username) {
+          throw new Error(data.username[0]);
+        } else if (data.email) {
+          throw new Error(data.email[0]);
+        } else if (data.password) {
+          throw new Error(data.password[0]);
+        } else if (data.detail) {
+          throw new Error(data.detail);
+        } else {
+          throw new Error("Registration failed");
+        }
+      }
+  
+      const data = await response.json();
+      toast.success("Registration successful! Please verify your email.");
+      navigate("/login");
+  
+    } catch (err) {
+      setError(err.message);
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleSocialRegister = (provider) => {
+    toast.info(`${provider} registration coming soon!`);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-blue-500 gap-14">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full max-w-md">
-        <div className="bg-blue-600 text-white text-center py-4">
-          <h1 className="text-2xl font-bold">Sign Up</h1>
-          <p className="text-sm">Create your account</p>
-        </div>
-        <div className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-gray-700">Full Name</label>
-              <input
-                type="text"
-                name="username"
-                placeholder="Full Name"
-                value={userData.username}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700">Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={userData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700">Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={userData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700">Confirm Password</label>
-              <input
-                type="password"
-                name="password2"
-                placeholder="Confirm Password"
-                value={userData.password2}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            {error && <div className="text-red-500">{error}</div>}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
+    <div className="mt-24">
+    <ThemeProvider theme={theme}>
+      <Grid container sx={{ minHeight: "100vh" }}>
+        {/* Left Side - Image */}
+        <Grid
+          item
+          xs={false}
+          sm={6}
+          sx={{
+            backgroundImage: `url(${holasignup})`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            position: "relative",
+            display: { xs: "none", sm: "block" },
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: "linear-gradient(45deg, rgba(0,0,0,0.7) 0%, rgba(22,101,52,0.4) 100%)",
+              backdropFilter: "brightness(1.1)",
+            },
+          }}
+        >
+          <Box
+            sx={{
+              position: "relative",
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "white",
+              padding: 4,
+              zIndex: 1,
+            }}
+          >
+            <Typography
+              variant="h3"
+              component="h1"
+              align="center"
+              sx={{
+                fontWeight: 800,
+                letterSpacing: "-1px",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                mb: 3,
+                fontSize: { sm: "2.5rem", md: "3rem" },
+              }}
             >
-              Register
-            </button>
-          </form>
-          <p className="text-center text-gray-600 mt-4">
-            Already have an account? <Link className="text-blue-500 underline" to="/login">Sign In</Link>
-          </p>
-        </div>
-      </div>
+              Join HolaHolaCar
+            </Typography>
+            <Typography
+              variant="h6"
+              align="center"
+              sx={{
+                maxWidth: "80%",
+                letterSpacing: "0.5px",
+                textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+                opacity: 0.9,
+              }}
+            >
+              Create your account and start your journey with us
+            </Typography>
+          </Box>
+        </Grid>
+
+        {/* Right Side - Form */}
+        <Grid item xs={12} sm={6}>
+          <Box
+            sx={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: { xs: 3, md: 8 },
+              backgroundColor: "white",
+            }}
+          >
+            <Container maxWidth="xs">
+              <Typography variant="h4" align="center" gutterBottom color="primary" sx={{ mb: 1 }}>
+                Create Account
+              </Typography>
+              <Typography variant="body1" align="center" color="text.secondary" sx={{ mb: 4, opacity: 0.8 }}>
+                Join our community today
+              </Typography>
+
+              {error && (
+                <Alert
+                  severity="error"
+                  sx={{
+                    mb: 3,
+                    borderRadius: "12px",
+                    backgroundColor: "rgba(211, 47, 47, 0.05)",
+                  }}
+                >
+                  {error}
+                </Alert>
+              )}
+
+              <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+                {providers.map((provider) => (
+                  <Button
+                    key={provider.id}
+                    variant="outlined"
+                    fullWidth
+                    startIcon={provider.icon}
+                    color="secondary"
+                    onClick={() => handleSocialRegister(provider.name)}
+                    sx={{
+                      py: 1.5,
+                      borderWidth: 1.5,
+                      "&:hover": {
+                        borderColor: "primary.main",
+                        backgroundColor: "rgba(22, 101, 52, 0.04)",
+                        borderWidth: 1.5,
+                      },
+                    }}
+                  >
+                    {provider.name}
+                  </Button>
+                ))}
+              </Box>
+
+              <Divider sx={{ my: 4 }}>or continue with email</Divider>
+
+              <form onSubmit={handleSubmit}>
+                <TextField
+                  fullWidth
+                  label="Full Name"
+                  name="username"
+                  value={userData.username}
+                  onChange={(e) => setUserData({ ...userData, username: e.target.value })}
+                  margin="normal"
+                  required
+                  disabled={loading}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Email address"
+                  name="email"
+                  type="email"
+                  value={userData.email}
+                  onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                  margin="normal"
+                  required
+                  disabled={loading}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Phone Number"
+                  name="phone_number"
+                  type="tel"
+                  value={userData.phone_number}
+                  onChange={(e) => setUserData({ ...userData, phone_number: e.target.value })}
+                  margin="normal"
+                  required
+                  disabled={loading}
+                  inputProps={{
+                    maxLength: 10,
+                    pattern: "[0-9]*",
+                  }}
+                  helperText="Enter 10-digit phone number"
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Password"
+                  name="password"
+                  type="password"
+                  value={userData.password}
+                  onChange={(e) => setUserData({ ...userData, password: e.target.value })}
+                  margin="normal"
+                  required
+                  disabled={loading}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Confirm Password"
+                  name="password2"
+                  type="password"
+                  value={userData.password2}
+                  onChange={(e) => setUserData({ ...userData, password2: e.target.value })}
+                  margin="normal"
+                  required
+                  disabled={loading}
+                  sx={{ mb: 3 }}
+                />
+
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  size="large"
+                  disabled={loading}
+                  endIcon={<ArrowForwardIcon />}
+                  sx={{
+                    py: 1.8,
+                    backgroundColor: "primary.main",
+                    "&:hover": {
+                      backgroundColor: "primary.dark",
+                      transform: "translateY(-1px)",
+                      boxShadow: "0 4px 8px rgba(22, 101, 52, 0.2)",
+                    },
+                  }}
+                >
+                  {loading ? "Creating Account..." : "Create Account"}
+                </Button>
+
+                <Typography variant="body2" align="center" sx={{ mt: 4, opacity: 0.8 }}>
+                  Already have an account?{" "}
+                  <MuiLink
+                    component={Link}
+                    to="/login"
+                    sx={{
+                      fontWeight: 600,
+                      color: "primary.main",
+                      textDecoration: "none",
+                      "&:hover": { textDecoration: "underline" },
+                    }}
+                  >
+                    Sign in
+                  </MuiLink>
+                </Typography>
+              </form>
+            </Container>
+          </Box>
+        </Grid>
+      </Grid>
+    </ThemeProvider>
     </div>
   );
 };

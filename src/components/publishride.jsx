@@ -1,192 +1,501 @@
-import React, { useState } from "react";
-import { useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { publishRide } from "../context/api";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext";
+import { ThemeContext } from "./comp/themeprovider";
 import LocationSearch from "./Location/locationsearch";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 
 const PublishRideForm = () => {
   const { user } = useContext(AuthContext);
-  const [username, setUsername] = useState("Guest");
+  const { darkMode } = useContext(ThemeContext);
+  const [step, setStep] = useState(1);
+  const [vehicles, setVehicles] = useState([]);
+
+  // Initialize form data with test values
   const [formData, setFormData] = useState({
-    name: "",
-    leavingFrom: "",
-    destination: "",
-    price: "",
-    date: "",
-    passengers: "",
-    note: "", // Optional note field
-    contact_number: "",
+    user: user?.id || "",
+    vehicle: "1", // Default vehicle ID
+    start_location: "Delhi, India",
+    end_location: "Mumbai, India",
+    start_latitude: 28.6139,
+    start_longitude: 77.209,
+    end_latitude: 19.076,
+    end_longitude: 72.8777,
+    price: "1000",
+    start_time: "09:00",
+    end_time: "18:00",
+    date: new Date().toISOString().split("T")[0],
+    distance: 1400,
+    available_seats: 4,
+    status: "SCHEDULED",
+    note: "Direct route via highway. AC vehicle. Regular breaks.",
+    allow_pets: true,
+    smoking_allowed: false,
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Helper function to get current time
+  const getCurrentTime = () => {
+    const now = new Date();
+    return `${String(now.getHours()).padStart(2, "0")}:${String(
+      now.getMinutes()
+    ).padStart(2, "0")}`;
+  };
 
-    const rideData = {
-      user: username,
-      start_location: formData.leavingFrom.trim(),
-      end_location: formData.destination.trim(),
-      price: parseInt(formData.price, 10), // String with two decimals
-      start_time: "2024-11-21T10:00:00Z", // Example fixed value
-      end_time: "2024-11-21T12:00:00Z", // Example fixed value
-      date: formData.date, // Already in ISO format from input[type="date"]
-      available_seats: parseInt(formData.passengers, 10), // Ensure integer
-      booked_seats: 0, // Integer
-      is_complete: false, // Boolean
-      note: formData.note.trim() || "", // Trim spaces, fallback to empty string
-      contact_number: parseInt(formData.contact_number, 10),
+  // Helper function to format datetime for backend
+  const formatDateTimeForBackend = (date, time) => {
+    try {
+      const [hours, minutes] = time.split(":");
+      const dateObj = new Date(date);
+      dateObj.setHours(parseInt(hours, 10));
+      dateObj.setMinutes(parseInt(minutes, 10));
+      dateObj.setSeconds(0);
+      return dateObj.toISOString();
+    } catch (error) {
+      console.error("Date formatting error:", error);
+      return null;
+    }
+  };
+
+  // Fetch vehicles on component mount
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/api/vehicles/",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        );
+        setVehicles(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch vehicles");
+      }
     };
 
-    console.log("Submitting ride data:", rideData); // Debugging
-
-    try {
-      const data = await publishRide(rideData);
-      console.log("Ride published successfully:", data);
-      toast.success("Ride Published Successfully");
-    } catch (error) {
-      console.error(
-        "Error publishing ride:",
-        error.response?.data || error.message
-      );
-      alert("Failed to publish ride. Please try again.");
+    if (user) {
+      fetchVehicles();
     }
-  };
+  }, [user]);
 
-  useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
+// In the same file, update handleSubmit:
+const handleSubmit = async (e) => {
+  if (e) e.preventDefault();
+
+  try {
+    if (!user) {
+      toast.error("Please log in to publish a ride");
+      return;
     }
-  }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+    // Validate required fields
+    if (!formData.vehicle) {
+      toast.error("Please select a vehicle");
+      return;
+    }
 
-  const inputStyles =
-    "peer py-3 pe-0 ps-8 block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200 text-lg focus:border-t-transparent focus:border-x-transparent focus:border-b-blue-500 focus:ring-0";
+    if (!formData.start_location || !formData.end_location) {
+      toast.error("Please enter both start and end locations");
+      return;
+    }
 
-  return (
-    <div>
-      {/* Hero Section */}
-      <div className="h-auto md:h-[750px] w-full flex justify-center bg-blue-500 flex-col items-center font-poppins shadow-xl p-4">
-        <div className="w-full md:w-[90%] flex justify-center text-center">
-          <h1 className="text-2xl md:text-5xl font-bold text-white">
-            Drive with <span className="text-boldtext">HolaHolaCar</span> and
-            save by sharing your ride!
-          </h1>
-        </div>
+    // Format the data for the backend
+    const formattedData = {
+      user: user.id,
+      vehicle: parseInt(formData.vehicle),
+      start_location: formData.start_location,
+      end_location: formData.end_location,
+      start_latitude: formData.start_latitude || 0,
+      start_longitude: formData.start_longitude || 0,
+      end_latitude: formData.end_latitude || 0,
+      end_longitude: formData.end_longitude || 0,
+      price: parseFloat(formData.price),
+      start_time: formatDateTimeForBackend(formData.date, formData.start_time),
+      end_time: formatDateTimeForBackend(formData.date, formData.end_time),
+      date: formData.date,
+      distance: parseInt(formData.distance) || 0,
+      available_seats: parseInt(formData.available_seats),
+      status: "SCHEDULED",
+      note: formData.note || "",
+      allow_pets: formData.allow_pets,
+      smoking_allowed: formData.smoking_allowed
+    };
 
-        {/* Form Section */}
-        <div className="h-auto md:h-[530px] bg-white w-full md:w-[50%] flex justify-center rounded-xl mt-8 md:mt-14 p-4">
-          <div className="w-full md:w-[95%] space-y-3 mt-4">
-            <form onSubmit={handleSubmit}>
-              <LocationSearch
-                label="Leaving From"
-                onSelect={(value) =>
-                  setFormData({ ...formData, leavingFrom: value })
+    console.log('Token:', localStorage.getItem('accessToken'));
+    console.log('Submitting ride data:', formattedData);
+
+    const response = await publishRide(formattedData);
+    toast.success("Ride published successfully!");
+    console.log("Ride published successfully:", response);
+    // ... rest of the success handling ...
+
+  } catch (error) {
+    console.error("Publish ride error:", error);
+    const errorMessage = 
+      error.response?.data?.detail || 
+      error.response?.data?.vehicle?.[0] || 
+      error.message || 
+      "Failed to publish ride";
+    toast.error(errorMessage);
+  }
+};
+
+  // ... rest of your component (renderStep and return statement) remains the same ...
+
+  const renderStep = () => {
+    const inputClassName = `w-full p-4 border rounded-lg ${
+      darkMode
+        ? "bg-gray-800 border-gray-700 text-gray-200"
+        : "bg-white border-gray-300 text-gray-900"
+    }`;
+
+    const labelClassName = `block text-sm font-medium ${
+      darkMode ? "text-gray-300" : "text-gray-700"
+    } mb-2`;
+
+    switch (step) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            <h2
+              className={`text-2xl font-bold ${
+                darkMode ? "text-gray-100" : "text-gray-900"
+              }`}
+            >
+              Route & Vehicle
+            </h2>
+            <div>
+              <select
+                value={formData.vehicle}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, vehicle: e.target.value }))
                 }
-              />
-              <LocationSearch
-                label="Destination"
-                onSelect={(value) =>
-                  setFormData({ ...formData, destination: value })
-                }
-              />
-              <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-                className={inputStyles}
-              />
-              <input
-                type="price"
-                name="price"
-                placeholder="Price Per Person"
-                value={formData.price}
-                onChange={handleChange}
-                required
-                className={inputStyles}
-              />
-              <input
-                type="contact_number"
-                name="contact_number"
-                placeholder="Contact Number"
-                value={formData.contact_number}
-                onChange={handleChange}
-                required
-                className={inputStyles}
-              />
-              <input
-                type="number"
-                name="passengers"
-                placeholder="Passengers"
-                value={formData.passengers}
-                onChange={handleChange}
-                required
-                className={inputStyles}
-              />
-              <textarea
-                name="note"
-                placeholder="Additional Notes"
-                value={formData.note}
-                onChange={handleChange}
-                className={inputStyles}
-              />
-              <button
-                className="w-full py-3 mt-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="submit"
+                className={inputClassName}
               >
-                Publish Ride
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      {/* Information Section */}
-      <div className="h-auto md:h-[600px] flex justify-center flex-col items-center font-poppins p-4">
-        <div className="text-center">
-          <h1 className="text-3xl md:text-6xl font-bold text-blue-400">
-            Drive, Share, Save
-          </h1>
-        </div>
-        <div className="flex flex-col md:flex-row md:gap-36 mt-8 items-center">
-          <div className="h-[200px] md:h-[300px] w-auto">
-            <img
-              className="h-full object-cover"
-              src="https://static.vecteezy.com/system/resources/previews/014/688/765/original/money-investment-concept-business-people-invest-their-money-for-profit-putting-capital-in-new-project-to-gain-profitable-returns-flat-cartoon-character-design-for-landing-page-web-mobile-banner-vector.jpg"
-              alt="Investment Concept"
+                <option value="">Select Vehicle</option>
+                {vehicles.map((vehicle) => (
+                  <option key={vehicle.id} value={vehicle.id}>
+                    {vehicle.make} {vehicle.model} -{" "}
+                    {vehicle.registration_number}
+                  </option>
+                ))}
+              </select>
+              {vehicles.length === 0 && (
+                <p
+                  className={`mt-2 text-sm ${
+                    darkMode ? "text-red-400" : "text-red-500"
+                  }`}
+                >
+                  Please add a vehicle first
+                </p>
+              )}
+            </div>
+            <LocationSearch
+              label="Start Location"
+              darkMode={darkMode}
+              onSelect={(value, coords) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  start_location: value,
+                  start_latitude: coords?.lat,
+                  start_longitude: coords?.lng,
+                }))
+              }
+            />
+            <LocationSearch
+              label="End Location"
+              darkMode={darkMode}
+              onSelect={(value, coords) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  end_location: value,
+                  end_latitude: coords?.lat,
+                  end_longitude: coords?.lng,
+                }))
+              }
             />
           </div>
-          <div className="flex flex-col w-full md:w-[50%] gap-4 font-poppins mt-4 md:mt-0">
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <h2
+              className={`text-2xl font-bold ${
+                darkMode ? "text-gray-100" : "text-gray-900"
+              }`}
+            >
+              Date & Time
+            </h2>
             <div>
-              <h1 className="text-lg md:text-[24px] font-bold">Drive</h1>
-              <p className="text-sm md:text-[18px]">
-                Keep your plans! Hit the road just as you anticipated and make
-                the most of your vehicle’s empty seats.
-              </p>
+              <label className={labelClassName}>Date</label>
+              <input
+                type="date"
+                value={formData.date}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, date: e.target.value }))
+                }
+                min={new Date().toISOString().split("T")[0]}
+                className={inputClassName}
+              />
             </div>
             <div>
-              <h1 className="text-lg md:text-[24px] font-bold">Share</h1>
-              <p className="text-sm md:text-[18px]">
-                Travel with good company. Share a memorable ride with travellers
-                from all walks of life.
-              </p>
+              <label className={labelClassName}>Start Time</label>
+              <input
+                type="time"
+                value={formData.start_time}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    start_time: e.target.value,
+                  }))
+                }
+                className={inputClassName}
+              />
             </div>
             <div>
-              <h1 className="text-lg md:text-[24px] font-bold">Save</h1>
-              <p className="text-sm md:text-[18px]">
-                Tolls, petrol, electricity… Easily divvy up all the costs with
-                other passengers.
-              </p>
+              <label className={labelClassName}>End Time</label>
+              <input
+                type="time"
+                value={formData.end_time}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    end_time: e.target.value,
+                  }))
+                }
+                className={inputClassName}
+              />
             </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <h2
+              className={`text-2xl font-bold ${
+                darkMode ? "text-gray-100" : "text-gray-900"
+              }`}
+            >
+              Ride Details
+            </h2>
+            <div>
+              <label className={labelClassName}>Price per Seat</label>
+              <input
+                type="number"
+                value={formData.price}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, price: e.target.value }))
+                }
+                placeholder="Enter price"
+                className={inputClassName}
+              />
+            </div>
+            <div>
+              <label className={labelClassName}>Available Seats</label>
+              <input
+                type="number"
+                value={formData.available_seats}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    available_seats: e.target.value,
+                  }))
+                }
+                min="1"
+                max="8"
+                className={inputClassName}
+              />
+            </div>
+            <div className="flex gap-4">
+              <label
+                className={`flex items-center space-x-2 ${
+                  darkMode ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={formData.allow_pets}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      allow_pets: e.target.checked,
+                    }))
+                  }
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span>Allow Pets</span>
+              </label>
+              <label
+                className={`flex items-center space-x-2 ${
+                  darkMode ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={formData.smoking_allowed}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      smoking_allowed: e.target.checked,
+                    }))
+                  }
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span>Smoking Allowed</span>
+              </label>
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6">
+            <h2
+              className={`text-2xl font-bold ${
+                darkMode ? "text-gray-100" : "text-gray-900"
+              }`}
+            >
+              Review & Submit
+            </h2>
+            <div>
+              <label className={labelClassName}>Additional Notes</label>
+              <textarea
+                value={formData.note}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, note: e.target.value }))
+                }
+                placeholder="Add any additional information for passengers..."
+                rows="4"
+                className={`${inputClassName} resize-none`}
+              />
+            </div>
+            <div
+              className={`p-4 rounded-lg ${
+                darkMode ? "bg-gray-700/50" : "bg-blue-50"
+              }`}
+            >
+              <h3
+                className={`font-medium mb-2 ${
+                  darkMode ? "text-gray-100" : "text-blue-800"
+                }`}
+              >
+                Ride Summary
+              </h3>
+              <ul
+                className={`space-y-2 text-sm ${
+                  darkMode ? "text-gray-300" : "text-blue-700"
+                }`}
+              >
+                <li>From: {formData.start_location}</li>
+                <li>To: {formData.end_location}</li>
+                <li>Date: {formData.date}</li>
+                <li>
+                  Time: {formData.start_time.split("T")[1]} -{" "}
+                  {formData.end_time.split("T")[1]}
+                </li>
+                <li>Price: ₹{formData.price}</li>
+                <li>Available Seats: {formData.available_seats}</li>
+              </ul>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div
+      className={`min-h-screen pt-20 ${
+        darkMode ? "bg-gray-900" : "bg-gray-50"
+      } transition-colors duration-300`}
+    >
+      <div className="max-w-2xl mx-auto p-6">
+        <div
+          className={`rounded-2xl shadow-xl p-8 ${
+            darkMode ? "bg-gray-800 border border-gray-700" : "bg-white"
+          }`}
+        >
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex justify-between mb-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className={`h-2 flex-1 mx-1 rounded ${
+                    step >= i
+                      ? darkMode
+                        ? "bg-blue-400"
+                        : "bg-blue-500"
+                      : darkMode
+                      ? "bg-gray-700"
+                      : "bg-gray-200"
+                  }`}
+                />
+              ))}
+            </div>
+            <div
+              className={`flex justify-between text-sm ${
+                darkMode ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              <span>Route</span>
+              <span>Time</span>
+              <span>Details</span>
+              <span>Review</span>
+            </div>
+          </div>
+
+          {/* Form Steps */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between mt-8">
+            {step > 1 && (
+              <button
+                onClick={() => setStep((prev) => prev - 1)}
+                className={`px-6 py-2.5 rounded-lg transition-colors ${
+                  darkMode
+                    ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Back
+              </button>
+            )}
+            <button
+              onClick={
+                step < 4 ? () => setStep((prev) => prev + 1) : handleSubmit
+              }
+              disabled={!formData.start_location && step === 1}
+              className={`px-6 py-2.5 rounded-lg transition-colors ${
+                step === 4
+                  ? darkMode
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-green-500 hover:bg-green-600"
+                  : darkMode
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-blue-500 hover:bg-blue-600"
+              } text-white ml-auto disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {step === 4 ? "Publish Ride" : "Continue"}
+            </button>
           </div>
         </div>
       </div>
@@ -195,140 +504,3 @@ const PublishRideForm = () => {
 };
 
 export default PublishRideForm;
-
-// import React, { useState, useContext, useEffect } from "react";
-// import { publishRide } from "../context/api";
-// import { toast } from "react-toastify";
-// import { AuthContext } from "../context/AuthContext";
-// import LocationSearch from "./Location/locationsearch";
-
-// const PublishRideForm = () => {
-//   const { user } = useContext(AuthContext);
-//   const [username, setUsername] = useState("Guest");
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     leavingFrom: "",
-//     destination: "",
-//     price: "",
-//     date: "",
-//     passengers: "",
-//     note: "", // Optional note field
-//     contact_number: ""
-//   });
-
-//   useEffect(() => {
-//     if (user) {
-//       setUsername(user.username);
-//     }
-//   }, [user]);
-
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     const rideData = {
-//       user: username,
-//       start_location: formData.leavingFrom.trim(),
-//       end_location: formData.destination.trim(),
-//       price: parseInt(formData.price, 10), // String with two decimals
-//       start_time: "2024-11-21T10:00:00Z", // Example fixed value
-//       end_time: "2024-11-21T12:00:00Z", // Example fixed value
-//       date: formData.date, // Already in ISO format from input[type="date"]
-//       passengers: parseInt(formData.passengers, 10),
-//       note: formData.note,
-//       contact_number: formData.contact_number
-//     };
-
-//     console.log("Submitting ride data:", rideData); // Debugging
-
-//     try {
-//       const data = await publishRide(rideData);
-//       console.log("Ride published successfully:", data);
-//       toast.success("Ride Published Successfully");
-//     } catch (error) {
-//       console.error(
-//         "Error publishing ride:",
-//         error.response?.data || error.message
-//       );
-//       alert("Failed to publish ride. Please try again.");
-//     }
-//   };
-
-//   useEffect(() => {
-//     const storedUsername = localStorage.getItem("username");
-//     if (storedUsername) {
-//       setUsername(storedUsername);
-//     }
-//   }, []);
-
-//   return (
-//     <div className="p-6">
-//       <h1 className="text-3xl font-bold mb-6">Publish a Ride</h1>
-//       <form onSubmit={handleSubmit}>
-//         <LocationSearch label="Leaving From" onSelect={(value) => setFormData({ ...formData, leavingFrom: value })} />
-//         <LocationSearch label="Destination" onSelect={(value) => setFormData({ ...formData, destination: value })} />
-//         <div className="mb-4">
-//           <label className="block text-gray-700 text-sm font-bold mb-2">Price</label>
-//           <input
-//             type="text"
-//             name="price"
-//             value={formData.price}
-//             onChange={handleInputChange}
-//             className="w-full p-2 border border-gray-300 rounded-md"
-//           />
-//         </div>
-//         <div className="mb-4">
-//           <label className="block text-gray-700 text-sm font-bold mb-2">Date</label>
-//           <input
-//             type="date"
-//             name="date"
-//             value={formData.date}
-//             onChange={handleInputChange}
-//             className="w-full p-2 border border-gray-300 rounded-md"
-//           />
-//         </div>
-//         <div className="mb-4">
-//           <label className="block text-gray-700 text-sm font-bold mb-2">Passengers</label>
-//           <input
-//             type="text"
-//             name="passengers"
-//             value={formData.passengers}
-//             onChange={handleInputChange}
-//             className="w-full p-2 border border-gray-300 rounded-md"
-//           />
-//         </div>
-//         <div className="mb-4">
-//           <label className="block text-gray-700 text-sm font-bold mb-2">Note</label>
-//           <textarea
-//             name="note"
-//             value={formData.note}
-//             onChange={handleInputChange}
-//             className="w-full p-2 border border-gray-300 rounded-md"
-//           />
-//         </div>
-//         <div className="mb-4">
-//           <label className="block text-gray-700 text-sm font-bold mb-2">Contact Number</label>
-//           <input
-//             type="text"
-//             name="contact_number"
-//             value={formData.contact_number}
-//             onChange={handleInputChange}
-//             className="w-full p-2 border border-gray-300 rounded-md"
-//           />
-//         </div>
-//         <button
-//           type="submit"
-//           className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-//         >
-//           Publish Ride
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default PublishRideForm;
