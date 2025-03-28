@@ -1,5 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
+import { ThemeContext } from '../comp/themeprovider';
 
 const reviews = [
   {
@@ -26,13 +28,24 @@ const reviews = [
   // Add more reviews as needed
 ];
 
+
 const InfiniteReviews = () => {
+  const { darkMode } = useContext(ThemeContext);
+
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 py-20 overflow-hidden rounded-2xl">
+    <div className={`py-20 overflow-hidden rounded-2xl ${
+      darkMode 
+        ? 'bg-gradient-to-b from-gray-900 to-gray-800 text-white' 
+        : 'bg-gradient-to-b from-gray-50 to-white text-gray-900'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <motion.h2 
-            className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+            className={`text-4xl md:text-5xl font-bold ${
+              darkMode
+                ? 'bg-gradient-to-r from-blue-400 to-purple-400'
+                : 'bg-gradient-to-r from-blue-600 to-purple-600'
+            } bg-clip-text text-transparent`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -40,7 +53,9 @@ const InfiniteReviews = () => {
             Loved by Travelers Worldwide
           </motion.h2>
           <motion.p 
-            className="mt-4 text-xl text-gray-600 dark:text-gray-300"
+            className={`mt-4 text-xl ${
+              darkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -66,7 +81,11 @@ const InfiniteReviews = () => {
             {[...reviews, ...reviews].map((review, index) => (
               <motion.div
                 key={index}
-                className="flex-shrink-0 w-[400px] bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700"
+                className={`flex-shrink-0 w-[400px] rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 ${
+                  darkMode 
+                    ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' 
+                    : 'bg-white border-gray-100 hover:bg-gray-50'
+                } border`}
                 whileHover={{ scale: 1.02 }}
               >
                 <div className="flex items-center space-x-4">
@@ -76,12 +95,18 @@ const InfiniteReviews = () => {
                     className="w-12 h-12 rounded-full"
                   />
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-black">{review.name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{review.role}</p>
+                    <h3 className={`text-lg font-semibold ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{review.name}</h3>
+                    <p className={`text-sm ${
+                      darkMode ? 'text-gray-400' : 'text-gray-600'
+                    }`}>{review.role}</p>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <p className="text-gray-600 dark:text-gray-700">{review.text}</p>
+                  <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+                    {review.text}
+                  </p>
                   <div className="flex items-center mt-4">
                     {[...Array(review.rating)].map((_, i) => (
                       <svg
@@ -99,7 +124,7 @@ const InfiniteReviews = () => {
             ))}
           </motion.div>
 
-          {/* Second row of reviews moving in opposite direction */}
+          {/* Second row of reviews - uses same styling as first row */}
           <motion.div 
             className="flex space-x-6 mt-8"
             animate={{ x: [-1035, 0] }}
@@ -115,7 +140,11 @@ const InfiniteReviews = () => {
             {[...reviews, ...reviews].map((review, index) => (
               <motion.div
                 key={index}
-                className="flex-shrink-0 w-[400px] bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100 dark:border-gray-700"
+                className={`flex-shrink-0 w-[400px] rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 ${
+                  darkMode 
+                    ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' 
+                    : 'bg-white border-gray-100 hover:bg-gray-50'
+                } border`}
                 whileHover={{ scale: 1.02 }}
               >
                 <div className="flex items-center space-x-4">
@@ -125,12 +154,18 @@ const InfiniteReviews = () => {
                     className="w-12 h-12 rounded-full"
                   />
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-black">{review.name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-700">{review.role}</p>
+                    <h3 className={`text-lg font-semibold ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{review.name}</h3>
+                    <p className={`text-sm ${
+                      darkMode ? 'text-gray-400' : 'text-gray-600'
+                    }`}>{review.role}</p>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <p className="text-gray-600 dark:text-black">{review.text}</p>
+                  <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
+                    {review.text}
+                  </p>
                   <div className="flex items-center mt-4">
                     {[...Array(review.rating)].map((_, i) => (
                       <svg
