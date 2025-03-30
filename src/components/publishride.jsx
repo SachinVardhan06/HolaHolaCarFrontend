@@ -59,25 +59,63 @@ const PublishRideForm = () => {
   };
 
   // Fetch vehicles on component mount
+  // useEffect(() => {
+  //   const fetchVehicles = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "https://holaholacarbackend-5.onrender.com/api/vehicles/",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+  //           },
+  //         }
+  //       );
+  //       setVehicles(response.data);
+  //     } catch (error) {
+  //       toast.error("Failed to fetch vehicles");
+  //     }
+  //   };
+
+  //   if (user) {
+  //     fetchVehicles();
+  //   }
+  // }, [user]);
+
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
+        const token = localStorage.getItem("accessToken");
+        console.log("Access Token:", token); // Debug log for token
+
         const response = await axios.get(
           "https://holaholacarbackend-5.onrender.com/api/vehicles/",
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-        setVehicles(response.data);
+
+        console.log("Vehicles API Response:", response.data); // Debug log for response
+
+        // Extract the vehicles from the `results` property
+        if (response.data && Array.isArray(response.data.results)) {
+          setVehicles(response.data.results);
+        } else {
+          console.error("Unexpected response format:", response.data);
+          setVehicles([]); // Fallback to an empty array
+        }
       } catch (error) {
+        console.error("Error fetching vehicles:", error);
         toast.error("Failed to fetch vehicles");
+        setVehicles([]); // Fallback to an empty array
       }
     };
 
     if (user) {
       fetchVehicles();
+    } else {
+      console.error("User is not logged in");
     }
   }, [user]);
 
@@ -148,6 +186,19 @@ const PublishRideForm = () => {
   // ... rest of your component (renderStep and return statement) remains the same ...
 
   const renderStep = () => {
+    // Add this check at the beginning of the function
+    if (!Array.isArray(vehicles)) {
+      return (
+        <p
+          className={`mt-2 text-sm ${
+            darkMode ? "text-red-400" : "text-red-500"
+          }`}
+        >
+          Failed to load vehicles. Please try again later.
+        </p>
+      );
+    }
+
     const inputClassName = `w-full p-4 border rounded-lg ${
       darkMode
         ? "bg-gray-800 border-gray-700 text-gray-200"
@@ -178,12 +229,16 @@ const PublishRideForm = () => {
                 className={inputClassName}
               >
                 <option value="">Select Vehicle</option>
-                {vehicles.map((vehicle) => (
-                  <option key={vehicle.id} value={vehicle.id}>
-                    {vehicle.make} {vehicle.model} -{" "}
-                    {vehicle.registration_number}
-                  </option>
-                ))}
+                {vehicles.length > 0 ? (
+                  vehicles.map((vehicle) => (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {vehicle.make} {vehicle.model} -{" "}
+                      {vehicle.registration_number}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>No vehicles available</option>
+                )}
               </select>
               {vehicles.length === 0 && (
                 <p
@@ -221,7 +276,6 @@ const PublishRideForm = () => {
             />
           </div>
         );
-
       case 2:
         return (
           <div className="space-y-6">

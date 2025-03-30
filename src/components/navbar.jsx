@@ -516,6 +516,17 @@ const Navbar = () => {
                     Profile
                   </Link>
                   <Link
+                    to="/my-booked-rides"
+                    className={`block px-3 py-2 rounded-md ${
+                      darkMode
+                        ? "text-gray-300 hover:bg-gray-700"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Booked Rides
+                  </Link>
+                  <Link
                     to="/my-rides"
                     className={`block px-3 py-2 rounded-md ${
                       darkMode

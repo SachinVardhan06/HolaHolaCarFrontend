@@ -307,18 +307,18 @@ function MyRides() {
           }
         );
 
-        if (response.data) {
-          console.group("Rides Data Debug");
-          console.log("Full response:", response.data);
-          console.log("First ride bookings:", response.data[0]?.bookings);
-          console.log(
-            "First ride user details:",
-            response.data[0]?.bookings?.[0]?.user_details
-          );
-          console.groupEnd();
+        console.log("Rides API Response:", response.data); // Debug log for response
+
+        if (Array.isArray(response.data)) {
           setRides(response.data);
+        } else if (
+          response.data?.results &&
+          Array.isArray(response.data.results)
+        ) {
+          setRides(response.data.results); // Handle paginated response
         } else {
-          setRides([]);
+          console.error("Unexpected response format:", response.data);
+          setRides([]); // Fallback to an empty array
         }
       } catch (error) {
         console.error("Error fetching rides:", error);
@@ -434,7 +434,18 @@ function MyRides() {
           My Published Rides
         </h1>
 
-        {rides.length === 0 ? (
+        {Array.isArray(rides) && rides.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {rides.map((ride) => (
+              <RideCard
+                key={ride.id}
+                ride={ride}
+                darkMode={darkMode}
+                onCancel={handleCancelRide}
+              />
+            ))}
+          </div>
+        ) : (
           <div
             className={`text-center py-10 ${
               darkMode ? "text-gray-400" : "text-gray-600"
@@ -447,17 +458,6 @@ function MyRides() {
             >
               Publish a Ride
             </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {rides.map((ride) => (
-              <RideCard
-                key={ride.id}
-                ride={ride}
-                darkMode={darkMode}
-                onCancel={handleCancelRide}
-              />
-            ))}
           </div>
         )}
       </div>
