@@ -178,7 +178,7 @@ function MyBookedRides() {
   const fetchBookings = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/bookings/my/${
+        `https://holaholacarbackend-5.onrender.com/api/bookings/my/${
           filter !== "all" ? `?status=${filter}` : ""
         }`,
         {
@@ -221,7 +221,7 @@ function MyBookedRides() {
 
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/bookings/${bookingId}/cancel/`,
+        `https://holaholacarbackend-5.onrender.com/api/bookings/${bookingId}/cancel/`,
         {},
         {
           headers: {

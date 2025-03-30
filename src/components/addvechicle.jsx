@@ -98,7 +98,7 @@
 //       formDataToSend.append("user", user.id);
 
 //       const response = await axios.post(
-//         "http://localhost:8000/api/vehicles/",
+//         "https://holaholacarbackend-5.onrender.com/api/vehicles/",
 //         formDataToSend,
 //         {
 //           headers: {
@@ -464,7 +464,7 @@
 //       formDataToSend.append("user", user.id);
 
 //       const response = await axios.post(
-//         "http://localhost:8000/api/vehicles/",
+//         "https://holaholacarbackend-5.onrender.com/api/vehicles/",
 //         formDataToSend,
 //         {
 //           headers: {
@@ -682,7 +682,7 @@ const AddVehicle = () => {
   //     formDataToSend.append("user", user.id);
 
   //     const response = await axios.post(
-  //       "http://localhost:8000/api/vehicles/",
+  //       "https://holaholacarbackend-5.onrender.com/api/vehicles/",
   //       formDataToSend,
   //       {
   //         headers: {
@@ -735,10 +735,11 @@ const AddVehicle = () => {
             return;
           }
           break;
-          case 3: // Vehicle Year
-          isValid = formData.year && 
-                   formData.year >= (new Date().getFullYear() - 24) && 
-                   formData.year <= new Date().getFullYear();
+        case 3: // Vehicle Year
+          isValid =
+            formData.year &&
+            formData.year >= new Date().getFullYear() - 24 &&
+            formData.year <= new Date().getFullYear();
           if (!isValid) {
             toast.error("Please select a valid vehicle year");
             return;
@@ -791,7 +792,7 @@ const AddVehicle = () => {
       formDataToSend.append("user", user.id);
 
       const response = await axios.post(
-        "http://localhost:8000/api/vehicles/",
+        "https://holaholacarbackend-5.onrender.com/api/vehicles/",
         formDataToSend,
         {
           headers: {

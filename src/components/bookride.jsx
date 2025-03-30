@@ -18,14 +18,11 @@ function BookRide() {
   const [mapLocations, setMapLocations] = useState({ start: "", end: "" });
   const [seats, setSeats] = useState(1);
 
-
-  
-
   useEffect(() => {
     const fetchRideDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/rides/${rideId}/`,
+          `https://holaholacarbackend-5.onrender.com/api/rides/${rideId}/`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -65,7 +62,7 @@ function BookRide() {
     }
     return "Anonymous Driver";
   };
-  
+
   const getDriverInitial = (ride) => {
     if (ride?.driver_details?.full_name) {
       return ride.driver_details.full_name[0].toUpperCase();
@@ -92,7 +89,7 @@ function BookRide() {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:8000/api/bookings/create/",
+        "https://holaholacarbackend-5.onrender.com/api/bookings/create/",
         {
           ride: parseInt(rideId),
           user: user.id, // Add user ID
@@ -139,7 +136,7 @@ function BookRide() {
     const fetchRideDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/rides/${rideId}/`,
+          `https://holaholacarbackend-5.onrender.com/api/rides/${rideId}/`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

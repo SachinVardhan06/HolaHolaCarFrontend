@@ -48,11 +48,14 @@ const Navbar = () => {
 
   const refreshUserData = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/profile/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
+      const response = await axios.get(
+        "https://holaholacarbackend-5.onrender.com/api/profile/",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
 
       // Update localStorage with fresh data
       const updatedUser = {
@@ -151,7 +154,7 @@ const Navbar = () => {
 
       // Call backend logout endpoint
       await axios.post(
-        "http://localhost:8000/api/logout/",
+        "https://holaholacarbackend-5.onrender.com/api/logout/",
         { refresh_token: refreshToken },
         {
           headers: {
@@ -200,7 +203,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
 
   return (
     <motion.nav

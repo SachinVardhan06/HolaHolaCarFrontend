@@ -23,7 +23,7 @@ const PublishRideForm = () => {
     start_longitude: 77.209,
     end_latitude: 19.076,
     end_longitude: 72.8777,
-    price: "1000",
+    price: "",
     start_time: "09:00",
     end_time: "18:00",
     date: new Date().toISOString().split("T")[0],
@@ -63,7 +63,7 @@ const PublishRideForm = () => {
     const fetchVehicles = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/vehicles/",
+          "https://holaholacarbackend-5.onrender.com/api/vehicles/",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -81,67 +81,69 @@ const PublishRideForm = () => {
     }
   }, [user]);
 
-// In the same file, update handleSubmit:
-const handleSubmit = async (e) => {
-  if (e) e.preventDefault();
+  // In the same file, update handleSubmit:
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
 
-  try {
-    if (!user) {
-      toast.error("Please log in to publish a ride");
-      return;
+    try {
+      if (!user) {
+        toast.error("Please log in to publish a ride");
+        return;
+      }
+
+      // Validate required fields
+      if (!formData.vehicle) {
+        toast.error("Please select a vehicle");
+        return;
+      }
+
+      if (!formData.start_location || !formData.end_location) {
+        toast.error("Please enter both start and end locations");
+        return;
+      }
+
+      // Format the data for the backend
+      const formattedData = {
+        user: user.id,
+        vehicle: parseInt(formData.vehicle),
+        start_location: formData.start_location,
+        end_location: formData.end_location,
+        start_latitude: formData.start_latitude || 0,
+        start_longitude: formData.start_longitude || 0,
+        end_latitude: formData.end_latitude || 0,
+        end_longitude: formData.end_longitude || 0,
+        price: parseFloat(formData.price),
+        start_time: formatDateTimeForBackend(
+          formData.date,
+          formData.start_time
+        ),
+        end_time: formatDateTimeForBackend(formData.date, formData.end_time),
+        date: formData.date,
+        distance: parseInt(formData.distance) || 0,
+        available_seats: parseInt(formData.available_seats),
+        status: "SCHEDULED",
+        note: formData.note || "",
+        allow_pets: formData.allow_pets,
+        smoking_allowed: formData.smoking_allowed,
+      };
+
+      console.log("Token:", localStorage.getItem("accessToken"));
+      console.log("Submitting ride data:", formattedData);
+
+      const response = await publishRide(formattedData);
+      toast.success("Ride published successfully!");
+      console.log("Ride published successfully:", response);
+      // ... rest of the success handling ...
+    } catch (error) {
+      console.error("Publish ride error:", error);
+      const errorMessage =
+        error.response?.data?.detail ||
+        error.response?.data?.vehicle?.[0] ||
+        error.message ||
+        "Failed to publish ride";
+      toast.error(errorMessage);
     }
-
-    // Validate required fields
-    if (!formData.vehicle) {
-      toast.error("Please select a vehicle");
-      return;
-    }
-
-    if (!formData.start_location || !formData.end_location) {
-      toast.error("Please enter both start and end locations");
-      return;
-    }
-
-    // Format the data for the backend
-    const formattedData = {
-      user: user.id,
-      vehicle: parseInt(formData.vehicle),
-      start_location: formData.start_location,
-      end_location: formData.end_location,
-      start_latitude: formData.start_latitude || 0,
-      start_longitude: formData.start_longitude || 0,
-      end_latitude: formData.end_latitude || 0,
-      end_longitude: formData.end_longitude || 0,
-      price: parseFloat(formData.price),
-      start_time: formatDateTimeForBackend(formData.date, formData.start_time),
-      end_time: formatDateTimeForBackend(formData.date, formData.end_time),
-      date: formData.date,
-      distance: parseInt(formData.distance) || 0,
-      available_seats: parseInt(formData.available_seats),
-      status: "SCHEDULED",
-      note: formData.note || "",
-      allow_pets: formData.allow_pets,
-      smoking_allowed: formData.smoking_allowed
-    };
-
-    console.log('Token:', localStorage.getItem('accessToken'));
-    console.log('Submitting ride data:', formattedData);
-
-    const response = await publishRide(formattedData);
-    toast.success("Ride published successfully!");
-    console.log("Ride published successfully:", response);
-    // ... rest of the success handling ...
-
-  } catch (error) {
-    console.error("Publish ride error:", error);
-    const errorMessage = 
-      error.response?.data?.detail || 
-      error.response?.data?.vehicle?.[0] || 
-      error.message || 
-      "Failed to publish ride";
-    toast.error(errorMessage);
-  }
-};
+  };
 
   // ... rest of your component (renderStep and return statement) remains the same ...
 

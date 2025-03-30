@@ -32,23 +32,23 @@ const theme = createTheme({
       main: "#166534",
       light: "#16a34a",
       dark: "#14532d",
-      contrastText: "#ffffff"
+      contrastText: "#ffffff",
     },
     secondary: {
       main: "#4b5563",
       light: "#9ca3af",
       dark: "#1f2937",
-      contrastText: "#ffffff"
+      contrastText: "#ffffff",
     },
     error: {
       main: "#dc2626",
       light: "#ef4444",
-      dark: "#991b1b"
+      dark: "#991b1b",
     },
     background: {
       default: "#ffffff",
-      paper: "#f9fafb"
-    }
+      paper: "#f9fafb",
+    },
   },
   typography: {
     fontFamily: "'Inter', 'Roboto', sans-serif",
@@ -56,22 +56,22 @@ const theme = createTheme({
       fontWeight: 700,
       fontSize: "2.5rem",
       lineHeight: 1.2,
-      letterSpacing: "-0.01em"
+      letterSpacing: "-0.01em",
     },
     h4: {
       fontWeight: 600,
       fontSize: "2rem",
-      lineHeight: 1.3
+      lineHeight: 1.3,
     },
     h6: {
       fontWeight: 500,
       fontSize: "1.25rem",
-      lineHeight: 1.6
+      lineHeight: 1.6,
     },
     button: {
       textTransform: "none",
-      fontWeight: 500
-    }
+      fontWeight: 500,
+    },
   },
   components: {
     MuiButton: {
@@ -83,10 +83,10 @@ const theme = createTheme({
           transition: "all 0.2s ease-in-out",
           "&:hover": {
             transform: "translateY(-1px)",
-            boxShadow: "0 4px 8px rgba(0,0,0,0.1)"
-          }
-        }
-      }
+            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+          },
+        },
+      },
     },
     MuiTextField: {
       styleOverrides: {
@@ -96,42 +96,42 @@ const theme = createTheme({
             backgroundColor: "#f8fafc",
             transition: "all 0.2s ease-in-out",
             "&:hover": {
-              backgroundColor: "#f1f5f9"
+              backgroundColor: "#f1f5f9",
             },
             "&.Mui-focused": {
               backgroundColor: "#ffffff",
-              boxShadow: "0 0 0 2px rgba(22, 101, 52, 0.2)"
-            }
-          }
-        }
-      }
+              boxShadow: "0 0 0 2px rgba(22, 101, 52, 0.2)",
+            },
+          },
+        },
+      },
     },
     MuiDivider: {
       styleOverrides: {
         root: {
           "&::before, &::after": {
-            borderColor: "rgba(0, 0, 0, 0.08)"
-          }
-        }
-      }
+            borderColor: "rgba(0, 0, 0, 0.08)",
+          },
+        },
+      },
     },
     MuiAlert: {
       styleOverrides: {
         root: {
-          borderRadius: 12
-        }
-      }
-    }
+          borderRadius: 12,
+        },
+      },
+    },
   },
   shape: {
-    borderRadius: 12
+    borderRadius: 12,
   },
   shadows: [
     "none",
     "0 1px 2px rgba(0,0,0,0.05)",
     // ...add more shadows if needed
-    "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)"
-  ]
+    "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)",
+  ],
 });
 
 const providers = [
@@ -154,7 +154,7 @@ const Login = () => {
     // Check for remembered email
     const savedEmail = localStorage.getItem("email");
     if (savedEmail) {
-      setCredentials(prev => ({ ...prev, email: savedEmail }));
+      setCredentials((prev) => ({ ...prev, email: savedEmail }));
       setRememberMe(true);
     }
 
@@ -194,17 +194,20 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:8000/api/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: credentials.email,
-          password: credentials.password,
-        }),
-        credentials: 'include',
-      });
+      const response = await fetch(
+        "https://holaholacarbackend-5.onrender.com/api/login/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: credentials.email,
+            password: credentials.password,
+          }),
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
 
@@ -236,8 +239,8 @@ const Login = () => {
       toast.success(`Welcome back, ${data.user.username}!`);
       navigate("/home");
       setTimeout(() => {
-        window.location.reload(); 
-      },);
+        window.location.reload();
+      });
     } catch (error) {
       console.error("Login error:", error);
       setError(error.message);
@@ -253,250 +256,261 @@ const Login = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCredentials(prev => ({
+    setCredentials((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     setError(null);
   };
 
   return (
     <div className="mt-24">
-    <ThemeProvider theme={theme}>
-      <Grid container sx={{ minHeight: "100vh" }}>
-        <Grid
-          item
-          xs={false}
-          sm={6}
-          sx={{
-            backgroundImage: `url(${login})`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            position: "relative",
-            display: { xs: "none", sm: "block" },
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: "linear-gradient(45deg, rgba(0,0,0,0.7) 0%, rgba(22,101,52,0.4) 100%)",
-              backdropFilter: "brightness(1.1)",
-            },
-          }}
-        >
-          <Box
+      <ThemeProvider theme={theme}>
+        <Grid container sx={{ minHeight: "100vh" }}>
+          <Grid
+            item
+            xs={false}
+            sm={6}
             sx={{
+              backgroundImage: `url(${login})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
               position: "relative",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "white",
-              padding: 4,
-              zIndex: 1,
+              display: { xs: "none", sm: "block" },
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background:
+                  "linear-gradient(45deg, rgba(0,0,0,0.7) 0%, rgba(22,101,52,0.4) 100%)",
+                backdropFilter: "brightness(1.1)",
+              },
             }}
           >
-            <Typography
-              variant="h3"
-              component="h1"
-              align="center"
+            <Box
               sx={{
-                fontWeight: 800,
-                letterSpacing: "-1px",
-                textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-                mb: 3,
-                fontSize: { sm: "2.5rem", md: "3rem" },
+                position: "relative",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "white",
+                padding: 4,
+                zIndex: 1,
               }}
             >
-              Welcome Back!
-            </Typography>
-            <Typography
-              variant="h6"
-              align="center"
-              sx={{
-                maxWidth: "80%",
-                letterSpacing: "0.5px",
-                textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
-                opacity: 0.9,
-              }}
-            >
-              Login to your account and start your journey
-            </Typography>
-          </Box>
-        </Grid>
-
-        {/* Right side - Form */}
-        <Grid item xs={12} sm={6}>
-          <Box
-            sx={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              padding: { xs: 3, md: 8 },
-              backgroundColor: "white",
-            }}
-          >
-            <Container maxWidth="xs">
               <Typography
-                variant="h4"
+                variant="h3"
+                component="h1"
                 align="center"
-                gutterBottom
-                color="primary"
-                sx={{ mb: 1 }}
+                sx={{
+                  fontWeight: 800,
+                  letterSpacing: "-1px",
+                  textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                  mb: 3,
+                  fontSize: { sm: "2.5rem", md: "3rem" },
+                }}
               >
-                Sign In
+                Welcome Back!
               </Typography>
+              <Typography
+                variant="h6"
+                align="center"
+                sx={{
+                  maxWidth: "80%",
+                  letterSpacing: "0.5px",
+                  textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+                  opacity: 0.9,
+                }}
+              >
+                Login to your account and start your journey
+              </Typography>
+            </Box>
+          </Grid>
 
-              {error && (
-                <Alert
-                  severity="error"
-                  sx={{
-                    mb: 3,
-                    borderRadius: "12px",
-                    backgroundColor: "rgba(211, 47, 47, 0.05)",
-                  }}
+          {/* Right side - Form */}
+          <Grid item xs={12} sm={6}>
+            <Box
+              sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                padding: { xs: 3, md: 8 },
+                backgroundColor: "white",
+              }}
+            >
+              <Container maxWidth="xs">
+                <Typography
+                  variant="h4"
+                  align="center"
+                  gutterBottom
+                  color="primary"
+                  sx={{ mb: 1 }}
                 >
-                  {error}
-                </Alert>
-              )}
+                  Sign In
+                </Typography>
 
-              <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
-                {providers.map((provider) => (
-                  <Button
-                    key={provider.id}
-                    variant="outlined"
-                    fullWidth
-                    onClick={() => handleSocialLogin(provider.name)}
-                    startIcon={provider.icon}
-                    color="secondary"
-                    disabled={loading}
+                {error && (
+                  <Alert
+                    severity="error"
                     sx={{
-                      py: 1.5,
-                      borderWidth: 1.5,
-                      "&:hover": {
-                        borderColor: "primary.main",
-                        backgroundColor: "rgba(22, 101, 52, 0.04)",
+                      mb: 3,
+                      borderRadius: "12px",
+                      backgroundColor: "rgba(211, 47, 47, 0.05)",
+                    }}
+                  >
+                    {error}
+                  </Alert>
+                )}
+
+                <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+                  {providers.map((provider) => (
+                    <Button
+                      key={provider.id}
+                      variant="outlined"
+                      fullWidth
+                      onClick={() => handleSocialLogin(provider.name)}
+                      startIcon={provider.icon}
+                      color="secondary"
+                      disabled={loading}
+                      sx={{
+                        py: 1.5,
                         borderWidth: 1.5,
+                        "&:hover": {
+                          borderColor: "primary.main",
+                          backgroundColor: "rgba(22, 101, 52, 0.04)",
+                          borderWidth: 1.5,
+                        },
+                      }}
+                    >
+                      {provider.name}
+                    </Button>
+                  ))}
+                </Box>
+
+                <Divider sx={{ my: 4 }}>or continue with email</Divider>
+
+                <form onSubmit={handleSubmit} noValidate>
+                  <TextField
+                    fullWidth
+                    label="Email address"
+                    name="email"
+                    type="email"
+                    value={credentials.email}
+                    onChange={handleInputChange}
+                    margin="normal"
+                    required
+                    disabled={loading}
+                    error={Boolean(
+                      error && error.toLowerCase().includes("email")
+                    )}
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    name="password"
+                    type="password"
+                    value={credentials.password}
+                    onChange={handleInputChange}
+                    margin="normal"
+                    required
+                    disabled={loading}
+                    error={Boolean(
+                      error && error.toLowerCase().includes("password")
+                    )}
+                    sx={{ mb: 3 }}
+                  />
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mb: 3,
+                    }}
+                  >
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                          color="primary"
+                          disabled={loading}
+                        />
+                      }
+                      label="Remember me"
+                    />
+                    <MuiLink
+                      component={Link}
+                      to="/forgot-password"
+                      sx={{
+                        color: "primary.main",
+                        textDecoration: "none",
+                        "&:hover": { textDecoration: "underline" },
+                      }}
+                    >
+                      Forgot password?
+                    </MuiLink>
+                  </Box>
+
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    size="large"
+                    disabled={loading}
+                    endIcon={
+                      loading ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : (
+                        <ArrowForwardIcon />
+                      )
+                    }
+                    sx={{
+                      py: 1.8,
+                      backgroundColor: "primary.main",
+                      "&:hover": {
+                        backgroundColor: "primary.dark",
+                        transform: "translateY(-1px)",
+                        boxShadow: "0 4px 8px rgba(22, 101, 52, 0.2)",
                       },
                     }}
                   >
-                    {provider.name}
+                    {loading ? "Signing in..." : "Sign In"}
                   </Button>
-                ))}
-              </Box>
+                </form>
 
-              <Divider sx={{ my: 4 }}>or continue with email</Divider>
-
-              <form onSubmit={handleSubmit} noValidate>
-                <TextField
-                  fullWidth
-                  label="Email address"
-                  name="email"
-                  type="email"
-                  value={credentials.email}
-                  onChange={handleInputChange}
-                  margin="normal"
-                  required
-                  disabled={loading}
-                  error={Boolean(error && error.toLowerCase().includes("email"))}
-                  sx={{ mb: 2 }}
-                />
-                <TextField
-                  fullWidth
-                  label="Password"
-                  name="password"
-                  type="password"
-                  value={credentials.password}
-                  onChange={handleInputChange}
-                  margin="normal"
-                  required
-                  disabled={loading}
-                  error={Boolean(error && error.toLowerCase().includes("password"))}
-                  sx={{ mb: 3 }}
-                />
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 3,
-                  }}
+                <Typography
+                  variant="body2"
+                  align="center"
+                  sx={{ mt: 4, opacity: 0.8 }}
                 >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        color="primary"
-                        disabled={loading}
-                      />
-                    }
-                    label="Remember me"
-                  />
+                  Don't have an account?{" "}
                   <MuiLink
                     component={Link}
-                    to="/forgot-password"
+                    to="/register"
                     sx={{
+                      fontWeight: 600,
                       color: "primary.main",
                       textDecoration: "none",
                       "&:hover": { textDecoration: "underline" },
                     }}
                   >
-                    Forgot password?
+                    Sign up
                   </MuiLink>
-                </Box>
-
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  disabled={loading}
-                  endIcon={loading ? <CircularProgress size={20} color="inherit" /> : <ArrowForwardIcon />}
-                  sx={{
-                    py: 1.8,
-                    backgroundColor: "primary.main",
-                    "&:hover": {
-                      backgroundColor: "primary.dark",
-                      transform: "translateY(-1px)",
-                      boxShadow: "0 4px 8px rgba(22, 101, 52, 0.2)",
-                    },
-                  }}
-                >
-                  {loading ? "Signing in..." : "Sign In"}
-                </Button>
-              </form>
-
-              <Typography
-                variant="body2"
-                align="center"
-                sx={{ mt: 4, opacity: 0.8 }}
-              >
-                Don't have an account?{" "}
-                <MuiLink
-                  component={Link}
-                  to="/register"
-                  sx={{
-                    fontWeight: 600,
-                    color: "primary.main",
-                    textDecoration: "none",
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                >
-                  Sign up
-                </MuiLink>
-              </Typography>
-            </Container>
-          </Box>
+                </Typography>
+              </Container>
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </ThemeProvider>
+      </ThemeProvider>
     </div>
   );
 };

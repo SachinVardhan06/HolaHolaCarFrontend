@@ -199,7 +199,7 @@ const MyVehicles = () => {
   const fetchVehicles = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/vehicles/user/",
+        "https://holaholacarbackend-5.onrender.com/api/vehicles/user/",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -230,11 +230,14 @@ const MyVehicles = () => {
   const handleDeleteVehicle = async (vehicleId) => {
     if (window.confirm("Are you sure you want to delete this vehicle?")) {
       try {
-        await axios.delete(`http://localhost:8000/api/vehicles/${vehicleId}/`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        });
+        await axios.delete(
+          `https://holaholacarbackend-5.onrender.com/api/vehicles/${vehicleId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        );
         toast.success("Vehicle deleted successfully");
         fetchVehicles();
       } catch (error) {

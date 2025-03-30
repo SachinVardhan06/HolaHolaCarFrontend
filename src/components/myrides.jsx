@@ -294,27 +294,32 @@ function MyRides() {
           throw new Error("No access token found");
         }
 
-        const response = await axios.get("http://localhost:8000/api/rides/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          params: {
-            user: user.id,
-          },
-        });
-
-        
+        const response = await axios.get(
+          "https://holaholacarbackend-5.onrender.com/api/rides/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            params: {
+              user: user.id,
+            },
+          }
+        );
 
         if (response.data) {
-          console.group('Rides Data Debug');
-          console.log('Full response:', response.data);
-          console.log('First ride bookings:', response.data[0]?.bookings);
-          console.log('First ride user details:', response.data[0]?.bookings?.[0]?.user_details);
+          console.group("Rides Data Debug");
+          console.log("Full response:", response.data);
+          console.log("First ride bookings:", response.data[0]?.bookings);
+          console.log(
+            "First ride user details:",
+            response.data[0]?.bookings?.[0]?.user_details
+          );
           console.groupEnd();
           setRides(response.data);
         } else {
-          setRides([]);}
+          setRides([]);
+        }
       } catch (error) {
         console.error("Error fetching rides:", error);
         const errorMessage =
@@ -373,7 +378,7 @@ function MyRides() {
       setLoading(true);
 
       const response = await axios.put(
-        `http://localhost:8000/api/rides/${rideId}/cancel/`,
+        `https://holaholacarbackend-5.onrender.com/api/rides/${rideId}/cancel/`,
         { status: "CANCELLED" },
         {
           headers: {

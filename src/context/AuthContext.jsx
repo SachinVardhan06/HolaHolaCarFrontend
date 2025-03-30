@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = "https://holaholacarbackend-5.onrender.com/api";
 
 // Add API endpoints configuration
 const API_ENDPOINTS = {
@@ -23,7 +23,7 @@ const refreshToken = async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json"
+        Accept: "application/json",
       },
       body: JSON.stringify({ refresh }),
     });
@@ -39,7 +39,7 @@ const refreshToken = async () => {
     }
 
     // Validate token response
-    if (!data.access || typeof data.access !== 'string') {
+    if (!data.access || typeof data.access !== "string") {
       console.error("Invalid token response:", data);
       return null;
     }
@@ -59,7 +59,7 @@ const refreshToken = async () => {
 const isTokenExpired = (token) => {
   if (!token) return true;
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(token.split(".")[1]));
     return payload.exp * 1000 < Date.now();
   } catch (error) {
     console.error("Token parsing error:", error);
@@ -67,14 +67,13 @@ const isTokenExpired = (token) => {
   }
 };
 
-
 const isValidLoginResponse = (data) => {
   return (
     data &&
-    typeof data.access === 'string' &&
-    typeof data.refresh === 'string' &&
+    typeof data.access === "string" &&
+    typeof data.refresh === "string" &&
     data.user &&
-    typeof data.user.username === 'string'
+    typeof data.user.username === "string"
   );
 };
 
@@ -97,7 +96,6 @@ const handleApiResponse = async (response) => {
 };
 
 export const AuthContext = createContext();
-
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
@@ -151,7 +149,7 @@ export const AuthProvider = ({ children }) => {
 
   const validateTokens = useCallback(async () => {
     const accessToken = localStorage.getItem("accessToken");
-    
+
     if (!accessToken || isTokenExpired(accessToken)) {
       const newToken = await refreshToken();
       if (!newToken) {
@@ -199,7 +197,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user, handleLogout]);
 
-  
   const handleLogin = async (credentials) => {
     setLoading(true);
     setError(null);
